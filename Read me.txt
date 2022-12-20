@@ -1,0 +1,37 @@
+
+All this code should be run in terminal
+
+
+How to install Valgrind
+
+:~ -sudo apt-get install valgrind
+
+how to run valgrind
+
+:~ valgrind --leak-check=yes ./outputfile
+
+how to run sanitizer
+
+:~ gcc cfile -o outputfile -fsanitize=address -static -libasan -g
+:~  ./outputfile \\runoutputfile
+
+
+used this code to run c files in terminal
+1.stack buffer overflow
+
+$ gcc soob.c -o soobout
+$ valgrind --leak-check=yes ./soobout
+
+$ gcc soob.c -o soobout
+$ gcc soob.c -o soobout -fsanitize=address -static-libasan -g
+$ ./soobout
+
+
+2. global buffer overflow
+ 
+$ gcc goob.c -o goobout
+$ valgrind --leak-check=yes ./goobout
+
+$ gcc goob.c -o goobout
+$ gcc goob.c -o goobout -fsanitize=address -static-libasan -g
+$ ./goobout
