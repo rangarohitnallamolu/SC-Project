@@ -1,0 +1,76 @@
+rohit@rohit:~/Documents/project$ valgrind --leak-check=yes ./soobout
+==42063== Memcheck, a memory error detector
+==42063== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==42063== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==42063== Command: ./soobout
+==42063== 
+==42063== Syscall param exit_group(status) contains uninitialised byte(s)
+==42063==    at 0x4954CA1: _Exit (_exit.c:30)
+==42063==    by 0x48AF551: __run_exit_handlers (exit.c:136)
+==42063==    by 0x48AF60F: exit (exit.c:143)
+==42063==    by 0x4893D96: (below main) (libc_start_call_main.h:74)
+==42063== 
+==42063== 
+==42063== HEAP SUMMARY:
+==42063==     in use at exit: 0 bytes in 0 blocks
+==42063==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==42063== 
+==42063== All heap blocks were freed -- no leaks are possible
+==42063== 
+==42063== Use --track-origins=yes to see where uninitialised values come from
+==42063== For lists of detected and suppressed errors, rerun with: -s
+==42063== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+rohit@rohit:~/Documents/project$  gcc soob.c -o soobout -fsanitize=address -static -libasan -g
+gcc: error: cannot specify -static with -fsanitize=address
+rohit@rohit:~/Documents/project$ gcc soob.c -o soobout -fsanitize=address -static-libasan -g
+rohit@rohit:~/Documents/project$ ./soobout
+=================================================================
+==42084==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffff45debf4 at pc 0x55f859660da8 bp 0x7ffff45dea10 sp 0x7ffff45dea00
+READ of size 4 at 0x7ffff45debf4 thread T0
+    #0 0x55f859660da7 in main /home/rohit/Documents/project/soob.c:5
+    #1 0x7f8ad3256d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #2 0x7f8ad3256e3f in __libc_start_main_impl ../csu/libc-start.c:392
+    #3 0x55f85958b3a4 in _start (/home/rohit/Documents/project/soobout+0x83a4)
+
+Address 0x7ffff45debf4 is located in stack of thread T0 at offset 452 in frame
+    #0 0x55f859660c6d in main /home/rohit/Documents/project/soob.c:2
+
+  This frame has 1 object(s):
+    [48, 448) 'stack_array' (line 3) <== Memory access at offset 452 overflows this variable
+HINT: this may be a false positive if your program uses some custom stack unwind mechanism, swapcontext or vfork
+      (longjmp and C++ exceptions *are* supported)
+SUMMARY: AddressSanitizer: stack-buffer-overflow /home/rohit/Documents/project/soob.c:5 in main
+Shadow bytes around the buggy address:
+  0x10007e8b3d20: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e8b3d30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e8b3d40: 00 00 00 00 00 00 f1 f1 f1 f1 f1 f1 00 00 00 00
+  0x10007e8b3d50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e8b3d60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x10007e8b3d70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00[f3]f3
+  0x10007e8b3d80: f3 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00
+  0x10007e8b3d90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e8b3da0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e8b3db0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e8b3dc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==42084==ABORTING
+

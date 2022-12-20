@@ -1,0 +1,63 @@
+rohit@rohit:~/Documents/project$ gcc goob.c -o goobout
+rohit@rohit:~/Documents/project$ valgrind --leak-check=yes ./goobout
+==42408== Memcheck, a memory error detector
+==42408== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==42408== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==42408== Command: ./goobout
+==42408== 
+==42408== 
+==42408== HEAP SUMMARY:
+==42408==     in use at exit: 0 bytes in 0 blocks
+==42408==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==42408== 
+==42408== All heap blocks were freed -- no leaks are possible
+==42408== 
+==42408== For lists of detected and suppressed errors, rerun with: -s
+==42408== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+rohit@rohit:~/Documents/project$ gcc goob.c -o goobout 
+rohit@rohit:~/Documents/project$ gcc goob.c -o goobout -fsanitize=address -static-libasan -g
+rohit@rohit:~/Documents/project$ ./goobout
+=================================================================
+==42439==ERROR: AddressSanitizer: global-buffer-overflow on address 0x5618ee14da74 at pc 0x5618ee115cc0 bp 0x7ffe3fc4ecf0 sp 0x7ffe3fc4ece0
+READ of size 4 at 0x5618ee14da74 thread T0
+    #0 0x5618ee115cbf in main /home/rohit/Documents/project/goob.c:6
+    #1 0x7ff1c00c2d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #2 0x7ff1c00c2e3f in __libc_start_main_impl ../csu/libc-start.c:392
+    #3 0x5618ee0403a4 in _start (/home/rohit/Documents/project/goobout+0x83a4)
+
+0x5618ee14da74 is located 4 bytes to the right of global variable 'global_array' defined in 'goob.c:3:5' (0x5618ee14d8e0) of size 400
+SUMMARY: AddressSanitizer: global-buffer-overflow /home/rohit/Documents/project/goob.c:6 in main
+Shadow bytes around the buggy address:
+  0x0ac39dc21af0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0ac39dc21b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0ac39dc21b10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0ac39dc21b20: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0ac39dc21b30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x0ac39dc21b40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00[f9]f9
+  0x0ac39dc21b50: f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9 f9 f9 f9 f9
+  0x0ac39dc21b60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0ac39dc21b70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0ac39dc21b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x0ac39dc21b90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==42439==ABORTING
+
